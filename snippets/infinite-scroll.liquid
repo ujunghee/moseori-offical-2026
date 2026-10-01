@@ -1,0 +1,29 @@
+{% comment %}
+  Loads the next page of paginated results when the user scrolls near the end of the list.
+  Must be used within paginate tags.
+
+  Accepts:
+  - paginate: {Object}
+  - container: {String} CSS selector (scoped to the current section) of the element whose children are appended
+
+  Usage:
+  {% paginate results by 12 %}
+    {% render 'infinite-scroll', paginate: paginate, container: '#product-grid' %}
+  {% endpaginate %}
+{% endcomment %}
+
+{{ 'component-infinite-scroll.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'infinite-scroll.js' | asset_url }}" defer="defer"></script>
+
+{%- if paginate.next -%}
+  <infinite-scroll
+    class="infinite-scroll"
+    data-container="{{ container | escape }}"
+    data-next-url="{{ paginate.next.url }}"
+  >
+    <a href="{{ paginate.next.url }}" class="infinite-scroll__link link">
+      {{- 'general.pagination.next' | t -}}
+    </a>
+    {%- render 'loading-spinner', class: 'loading__spinner infinite-scroll__spinner hidden' -%}
+  </infinite-scroll>
+{%- endif -%}

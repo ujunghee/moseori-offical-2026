@@ -51,20 +51,6 @@ if (!customElements.get('quick-order-list')) {
       }
 
       initEventListeners() {
-        this.querySelectorAll('.pagination__item').forEach((link) => {
-          link.addEventListener('click', async (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-
-            const url = new URL(event.currentTarget.href);
-
-            this.toggleTableLoading(true);
-            await this.refresh(url.searchParams.get('page') || '1');
-            this.scrollTop();
-            this.toggleTableLoading(false);
-          });
-        });
-
         this.querySelector('.quick-order-list__contents').addEventListener(
           'keyup',
           this.handleScrollIntoView.bind(this)
@@ -93,10 +79,6 @@ if (!customElements.get('quick-order-list')) {
             this.startQueue(button.dataset.index, 0);
           });
         });
-      }
-
-      get currentPage() {
-        return this.querySelector('.pagination-wrapper')?.dataset?.page ?? '1';
       }
 
       get cartVariantsForProduct() {
@@ -173,10 +155,10 @@ if (!customElements.get('quick-order-list')) {
         this.toggleLoading(enable);
       }
 
-      async refresh(pageNumber = null) {
+      async refresh() {
         const url = this.dataset.url || window.location.pathname;
 
-        return fetch(`${url}?section_id=${this.dataset.section}&page=${pageNumber || this.currentPage}`)
+        return fetch(`${url}?section_id=${this.dataset.section}`)
           .then((response) => response.text())
           .then((responseText) => {
             const html = new DOMParser().parseFromString(responseText, 'text/html');
@@ -221,10 +203,7 @@ if (!customElements.get('quick-order-list')) {
             const table = this.quickOrderListTable;
             const newTable = newSection.querySelector('.quick-order-list__table');
 
-            // only update variants if they are from the active page
-            const shouldUpdateVariants =
-              this.currentPage === (newSection.querySelector('.pagination-wrapper')?.dataset.page ?? '1');
-            if (newTable && shouldUpdateVariants) {
+            if (newTable) {
               table.innerHTML = newTable.innerHTML;
 
               const newFocusTarget = this.querySelector(`[data-target='${focusTarget}']`);
@@ -245,16 +224,6 @@ if (!customElements.get('quick-order-list')) {
 
       getTotalBar() {
         return this.querySelector('.quick-order-list__total');
-      }
-
-      scrollTop() {
-        const { top } = this.getBoundingClientRect();
-
-        if (this.isListInsideModal) {
-          this.scrollIntoView();
-        } else {
-          window.scrollTo({ top: top + window.scrollY - (this.stickyHeader?.height || 0), behavior: 'instant' });
-        }
       }
 
       scrollQuickOrderListTable(target) {
@@ -332,7 +301,7 @@ if (!customElements.get('quick-order-list')) {
         const body = JSON.stringify({
           updates: items,
           sections: this.getSectionsToRender().map(({ section }) => section),
-          sections_url: `${url}?page=${this.currentPage}`,
+          sections_url: url,
         });
 
         this.updateMessage();

@@ -28,7 +28,6 @@
       method="post"
       id="QuickOrderList"
     >
-      {% paginate product.variants by section.settings.variants_per_page %}
         <div class="quick-order-list__container" id="main-variant-items">
           <table class="quick-order-list__table">
             <caption class="visually-hidden">
@@ -99,10 +98,6 @@
             </tbody>
           </table>
         </div>
-        <div class="js-paginate">
-          {% render 'pagination', paginate: paginate %}
-        </div>
-      {%- endpaginate -%}
 
       <p
         class="visually-hidden"

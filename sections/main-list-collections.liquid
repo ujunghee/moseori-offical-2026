@@ -44,7 +44,7 @@
         </li>
       {%- endfor -%}
     </ul>
-    {% render 'pagination', paginate: paginate %}
+    {% render 'infinite-scroll', paginate: paginate, container: '.collection-list' %}
   {%- endpaginate -%}
 </div>
 {% schema %}

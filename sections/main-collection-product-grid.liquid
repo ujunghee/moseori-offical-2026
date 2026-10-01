@@ -151,9 +151,7 @@
               {%- endfor -%}
             </ul>
 
-            {%- if paginate.pages > 1 -%}
-              {% render 'pagination', paginate: paginate, anchor: '' %}
-            {%- endif -%}
+            {% render 'infinite-scroll', paginate: paginate, container: '#product-grid' %}
           </div>
         {%- endif -%}
       </div>
