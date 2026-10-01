@@ -1,0 +1,132 @@
+{{ 'section-contact-simple.css' | asset_url | stylesheet_tag }}
+
+{%- style -%}
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+.address-wrap {
+    width: 100vw;
+    display: flex;
+    height: 100dvh;
+    align-items: center;
+    position: absolute;
+    justify-content: center;
+}
+.simple-contact {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .8rem;
+}
+.simple-contact p {
+    margin:0;
+    padding:0;
+    line-height: 1.8rem;
+}
+{%- endstyle -%}
+
+<div class="address-wrap">
+  <div class="simple-contact ">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="add-title">
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
+    <p>
+      <a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a>
+    </p>
+    <p>
+      <a href="https://instagram.com/{{ section.settings.instagram | remove: '@' }}" target="_blank" rel="noopener">
+        {{ section.settings.instagram }}
+      </a>
+    </p>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Simple Contact",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "Contact Us",
+      "label": "Heading"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "Small"
+        },
+        {
+          "value": "h1",
+          "label": "Medium"
+        },
+        {
+          "value": "h0",
+          "label": "Large"
+        }
+      ],
+      "default": "h1",
+      "label": "Heading size"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "default": "hello@example.com",
+      "label": "Email address"
+    },
+    {
+      "type": "text",
+      "id": "instagram",
+      "default": "@yourbrand",
+      "label": "Instagram handle"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "Section padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Simple Contact"
+    }
+  ]
+}
+{% endschema %}

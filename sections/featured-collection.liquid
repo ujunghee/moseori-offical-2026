@@ -1,0 +1,514 @@
+{{ 'template-collection.css' | asset_url | stylesheet_tag }}
+{{ 'component-card.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+{% if section.settings.image_shape == 'blob' %}
+  {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
+{%- endif -%}
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  .collection-list {
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: 6rem;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<!-- 모달 창 마크업 추가 -->
+<div id="imageModal" class="image-modal">
+  <span class="close-modal">Close</span>
+  <div class="img-modal-layout">
+    <button type="button" class="btn-arrow prev">prev</button>
+    <img class="modal-content" id="modalImage">
+    <button type="button" class="btn-arrow next">next</button>
+  </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+  // 모달 관련 요소 선택
+  const modal = document.getElementById('imageModal');
+  const modalImg = document.getElementById('modalImage');
+  const closeBtn = document.querySelector('.close-modal');
+  const modalTriggers = document.querySelectorAll('.modal-trigger');
+  
+  // 이미지 배열 구성
+  const images = [];
+  modalTriggers.forEach(function(img) {
+    images.push({
+      src: img.getAttribute('data-full-image'),
+      alt: img.getAttribute('alt')
+    });
+  });
+  
+  // 현재 이미지 인덱스
+  let currentIndex = 0;
+  
+  // 이미지 클릭 이벤트
+  modalTriggers.forEach(function(img, index) {
+    img.addEventListener('click', function() {
+      currentIndex = index;
+      modal.classList.add('show');
+      modalImg.src = this.getAttribute('data-full-image');
+      document.body.style.overflow = 'hidden'; // 스크롤 방지
+    });
+  });
+  
+  // 닫기 버튼
+  closeBtn.addEventListener('click', function() {
+    modal.classList.remove('show');
+    document.body.style.overflow = ''; // 스크롤 복원
+  });
+  
+  // 모달 영역 클릭 시 닫기
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) {
+      modal.classList.remove('show');
+      document.body.style.overflow = ''; // 스크롤 복원
+    }
+  });
+  
+  // ESC 키로 모달 닫기
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.classList.contains('show')) {
+      modal.classList.remove('show');
+      document.body.style.overflow = ''; // 스크롤 복원
+    }
+  });
+
+  // 이전, 다음 버튼 선택 및 이벤트 처리
+  const prevBtn = document.querySelector('.prev');
+  const nextBtn = document.querySelector('.next');
+
+  if(prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      console.log('prev');
+      if (images.length <= 1) return;
+      
+      // 이전 이미지로 인덱스 변경
+      currentIndex = (currentIndex - 1 + images.length) % images.length;
+      modalImg.src = images[currentIndex].src;
+    });
+  }
+
+  if(nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      console.log('next');
+      if (images.length <= 1) return;
+      
+      // 다음 이미지로 인덱스 변경
+      currentIndex = (currentIndex + 1) % images.length;
+      modalImg.src = images[currentIndex].src;
+    });
+  }
+});
+</script>
+</div>
+      <div
+        class="collection{% if section.settings.layout_type != 'vertical' %} page-width{% endif %}"
+      >
+        <div class="loading-overlay gradient"></div>
+        
+        <ul
+          id="collection-grid"
+          data-id="{{ section.id }}"
+          class="
+            grid collection-grid grid--{{ section.settings.columns_mobile }}-col-tablet-down
+            grid--{{ section.settings.columns_desktop }}-col-desktop
+          "
+        >
+          {% assign skip_card_styles = false %}
+          {%- for block in section.blocks -%}
+            {% if block.type == "collection_item" %}
+              {% assign lazy_load = false %}
+              {%- if forloop.index > 2 -%}
+                {%- assign lazy_load = true -%}
+              {%- endif -%}
+              <li
+                class="grid__item{% if settings.animations_reveal_on_scroll %} scroll-trigger animate--slide-in{% endif %}"
+                {% if settings.animations_reveal_on_scroll %}
+                  data-cascade
+                  style="--animation-order: {{ forloop.index }};"
+                {% endif %}
+                {{ block.shopify_attributes }}
+              >
+                <div class="collection-item">
+                  {% if block.settings.image != blank %}
+                    <div class="collection-item__image-container">
+                      <img 
+                        src="{{ block.settings.image | img_url: '3000x' }}"
+                        alt="{{ block.settings.title | escape }}"
+                        loading="{% if lazy_load %}lazy{% else %}eager{% endif %}"
+                        class="collection-item__image modal-trigger"
+                        data-full-image="{{ block.settings.image | img_url: 'master' }}"
+                      >
+                    </div>
+                  {% else %}
+                    {% comment %} 이미지가 없을 경우 assets 폴더의 이미지 사용 {% endcomment %}
+                    {% if block.settings.asset_image != blank %}
+                      <div class="collection-item__image-container">
+                        <img 
+                          src="{{ block.settings.asset_image | asset_url }}"
+                          alt="{{ block.settings.title | escape }}"
+                          loading="{% if lazy_load %}lazy{% else %}eager{% endif %}"
+                          class="collection-item__image modal-trigger"
+                          data-full-image="{{ block.settings.asset_image | asset_url }}"
+                        >
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                </div>
+              </li>
+            {% endif %}
+          {%- endfor -%}
+        </ul>
+        
+        <div class="collection-info">
+          {% if section.settings.collection_description != blank %}
+            {% if page.handle == 'collection01' %}
+              <div class="collection-info__content">
+                <span class="collection-info__title">collection title</span>
+                <p class="collection-info__text">
+                  컬렉션 01에 대한 설명입니다.컬렉션 01에 대한 설명입니다.
+                  컬렉션 01에 대한 설명입니다.컬렉션 01에 대한 설명입니다.컬렉션 01에 대한 설명입니다.
+                  컬렉션 01에 대한 설명입니다.컬렉션 01에 대한 설명입니다.컬렉션 01에 대한 설명입니다.
+                </p>
+              </div>
+            {% elsif page.handle == 'collection02' %}
+              <div class="collection-info__content">
+                <span class="collection-info__title">collection title</span>
+                <p class="collection-info__text">컬렉션 02에 대한 설명입니다.</p>
+              </div>
+            {% elsif page.handle == 'collection03' %}
+              <div class="collection-info__content">
+                <h2 class="collection-info__title">collection title</h2>
+                <p class="collection-info__text">컬렉션 03에 대한 설명입니다.</p>
+              </div>
+            {% else %}
+              <div class="collection-info__content">
+                <p class="collection-info__text">일반 컬렉션 설명</p>
+              </div>
+            {% endif %}
+          {% endif %}
+        </div>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .collection {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  .img-modal-layout {
+    display: flex;
+    justify-content: center;
+    gap: 6vw;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+  }
+  .img-modal-layout img {
+    width: 55%;
+    height: calc(100% - 6rem);
+    object-fit: contain;
+  }
+  .img-modal-layout button {
+    cursor: pointer;
+  }
+  .btn-arrow {
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: underline;
+    color: white;
+    background: initial;
+    border: none;
+    display: inline;
+    height: auto;
+    transition: .3s;
+  }
+  
+  .collection-info__content {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding:0 0 5rem;
+  }
+  
+  .collection-info__title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: black;
+  }
+  
+  .collection-info__text {
+    font-size: clamp(13px, 88%, 15px);
+    color: black;
+    margin: 0;
+    transition: 0.3s;
+  }
+  
+  #collection-grid {
+    flex: 0.6;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  .collection-item {
+    height: 100%;
+  }
+  
+  .collection-item__image-container {
+    width: 100%;
+    height: 100%;
+    cursor:pointer;
+    overflow: hidden;
+  }
+  
+  .collection-item__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  
+  .collection-item:hover .collection-item__image {
+    transform: scale(1.05);
+  }
+  
+  /* 모달 창 스타일 */
+  .image-modal {
+    visibility: visible;
+    position: fixed;
+    left: 0;
+    z-index: 1000;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background: #1703036b;
+    -webkit-backdrop-filter :blur(24px);
+    backdrop-filter: blur(24px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .image-modal.show {
+    pointer-events: auto;
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .close-modal {
+    font-size: 16px;
+    color: white;
+    background: initial;
+    border: none;
+    cursor: pointer;
+    display: block;
+    right: 2.4rem;
+    z-index:3;
+    top: 1.5rem;
+    letter-spacing: 0;
+    position: absolute;
+    transition: .3s;
+  }
+  .close-modal:hover,
+  .btn-arrow:hover {
+    color: #bbb;
+  }
+  @media screen and (max-width: 1020px) {
+    .img-modal-layout {
+      display: block;
+    }
+    .collection {
+      flex-direction: column;
+    }
+    .img-modal-layout img {
+      width: 100%;
+        top: 0;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        object-fit: cover;
+    }
+    .btn-arrow {
+      top: 50%;
+      position: absolute;
+      z-index: 5;
+    }
+    .btn-arrow.prev {
+      left:2.4rem;
+    }
+    .btn-arrow.next {
+      right:2.4rem;
+    }
+    .collection-info {
+      position: relative;
+      height: auto;
+      flex: none;
+      padding: 0 0 2rem;
+    }
+    
+    .collection-info__content {
+      padding-top: 0;
+    }
+  }
+</style>
+
+{% schema %}
+{
+  "name": "컬렉션 01",
+  "class": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "collection_description",
+      "label": "컬렉션 설명",
+      "default": "collection 설명"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "데스크톱 열 수"
+    },
+    {
+      "type": "select",
+      "id": "columns_mobile",
+      "default": "2",
+      "label": "모바일 열 수",
+      "options": [
+        {
+          "value": "1",
+          "label": "1열"
+        },
+        {
+          "value": "2",
+          "label": "2열"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "layout_type",
+      "default": "horizontal",
+      "label": "레이아웃 타입",
+      "options": [
+        {
+          "value": "horizontal",
+          "label": "가로형"
+        },
+        {
+          "value": "vertical",
+          "label": "세로형"
+        }
+      ]
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "색상 구성표",
+      "default": "scheme-1"
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "options": [
+        {
+          "value": "default",
+          "label": "기본"
+        },
+        {
+          "value": "arch",
+          "label": "아치"
+        },
+        {
+          "value": "blob",
+          "label": "블랍"
+        },
+        {
+          "value": "round",
+          "label": "라운드"
+        }
+      ],
+      "default": "default",
+      "label": "이미지 모양"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "상단 여백",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "하단 여백",
+      "default": 36
+    }
+  ],
+  "blocks": [
+    {
+      "type": "collection_item",
+      "name": "컬렉션 아이템",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "이미지"
+        },
+        {
+          "type": "text",
+          "id": "asset_image",
+          "label": "Asset 이미지 파일명",
+          "info": "Assets 폴더에 있는 이미지 파일명을 입력하세요 (예: collection-01.jpg)"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "이미지 대체 텍스트",
+          "default": "컬렉션 이미지"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "컬렉션 01",
+      "blocks": [
+        {
+          "type": "collection_item"
+        },
+        {
+          "type": "collection_item"
+        },
+        {
+          "type": "collection_item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

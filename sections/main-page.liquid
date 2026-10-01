@@ -1,0 +1,180 @@
+{{ 'section-main-page.css' | asset_url | stylesheet_tag }}
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: {{ section.settings.padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ section.settings.padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+  .collections-wrap {
+    display: flex;
+    justify-content: space-between;
+    height:100dvh;
+  }
+  
+  .collections-wrap ul {  
+    list-style-type: none;
+    padding: 6rem 0 0 0;
+    flex: 0 0 35%;
+  }
+  .collections-wrap ul li {
+    line-height: 2.5rem;
+    text-align: right;
+    padding-right: 5rem;
+  }
+  .collections-wrap a {
+    text-decoration: none;
+    color: black;
+    font-size: 1.4rem;
+    position: relative;
+    transition: .3s;
+    display: inline-block;
+  }
+  .collections-wrap a:hover {
+    color:#978b80;
+  }
+  .block-img {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height:100%;
+    flex:.65;
+  }
+  
+  .collection-image {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+  
+  @media screen and (max-width: 1020px) {
+    .collections-wrap {
+      flex-direction: column;
+      text-align: center;
+      height:auto;
+    }
+    .collections-wrap ul {
+      padding-top: 10.5rem;
+    }
+    .collections-wrap ul li {
+      padding:0;
+      text-align: center;
+    }
+    .collections-wrap ul,
+    .block-img {
+      flex: 0 0 100%;
+    }
+    
+    .block-img {
+      margin-top: 2rem;
+      display:none;
+    }
+  }
+{%- endstyle -%}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const collectionLinks = document.querySelectorAll('.collections-wrap a');
+    const blockImg = document.querySelector('.block-img');
+    
+    // 초기 이미지 요소들 생성
+    const collections = [
+      { id: 'collection01', imageUrl: '{{ "collection01-image.jpg" | asset_url }}' },
+      { id: 'collection02', imageUrl: '{{ "collection02-image.jpg" | asset_url }}' },
+      { id: 'collection03', imageUrl: '{{ "collection02-image.jpg" | asset_url }}' }
+    ];
+    
+    collections.forEach(collection => {
+      const img = document.createElement('img');
+      img.src = collection.imageUrl;
+      img.alt = collection.id;
+      img.classList.add('collection-image');
+      img.dataset.collection = collection.id;
+      blockImg.appendChild(img);
+    });
+    
+    // 호버 이벤트 추가
+    collectionLinks.forEach(link => {
+      const collectionId = link.getAttribute('href').split('/').pop();
+      
+      link.addEventListener('mouseenter', function() {
+        const targetImage = document.querySelector(`.collection-image[data-collection="${collectionId}"]`);
+        if (targetImage) {
+          targetImage.style.opacity = '1';
+        }
+      });
+      
+      link.addEventListener('mouseleave', function() {
+        const targetImage = document.querySelector(`.collection-image[data-collection="${collectionId}"]`);
+        if (targetImage) {
+          targetImage.style.opacity = '0';
+        }
+      });
+    });
+  });
+</script>
+
+{% if page.handle == 'collection01' %}
+  <!-- Collection 01 content -->
+{% elsif page.handle == 'collection02' %}
+  <!-- Collection 02 content -->
+{% else %}
+  <!-- Default content -->
+{% endif %}
+<div class="collections-wrap">
+  <ul>
+    <li>
+      <a href="/pages/collection01">Collection01</a>
+    </li>
+    <li>
+      <a href="/pages/collection02">Collection02</a>
+    </li>
+    <li>
+      <a href="/pages/collection03">Collection03</a>
+    </li>
+  </ul>
+  <div class="block-img">
+    <!-- 이미지가 JS로 여기에 추가됩니다 -->
+  </div>
+</div>
+{% schema %}
+{
+  "name": "t:sections.main-page.name",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 36
+    }
+  ]
+}
+{% endschema %}

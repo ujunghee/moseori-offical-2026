@@ -1,0 +1,198 @@
+{% comment %}
+  2026 갤러리 - PC / 모바일 완전 분리
+  PC: 세로 스택 (슬라이더 없음) | 모바일: slider-component 슬라이더
+{% endcomment %}
+
+{%- assign featured_media = product.selected_or_first_available_variant.featured_media | default: product.media.first -%}
+
+<div id="P26Gallery-{{ section.id }}" class="p26-gallery" role="region" aria-label="{{ 'products.product.media.gallery_viewer' | t }}">
+  <div class="p26-gallery-inner">
+    {%- if product.media.size > 1 -%}
+      {%- if product.media.size > 6 -%}
+        {%- assign max_offset = product.media.size | minus: 4 -%}
+        {%- assign thumb_offset = "now" | date: "%s" | plus: 0 | modulo: max_offset -%}
+      {%- else -%}
+        {%- assign thumb_offset = 0 -%}
+      {%- endif -%}
+      <div class="p26-thumbs" role="tablist">
+        {%- for media in product.media offset: thumb_offset limit: 4 -%}
+          <button
+            type="button"
+            class="p26-thumb{% if media.id == featured_media.id %} is-active{% endif %}"
+            data-target="{{ section.id }}-{{ media.id }}"
+            aria-label="{{ 'products.product.media.load_image' | t: index: forloop.index }}"
+            aria-current="{% if media.id == featured_media.id %}true{% else %}false{% endif %}"
+            role="tab"
+          >
+            {% if media.media_type == 'image' %}
+              {{ media.preview_image | image_url: width: 144 | image_tag: loading: 'lazy', alt: media.alt, class: 'p26-thumb__img' }}
+            {% else %}
+              <span class="p26-thumb__placeholder">{{ 'product-' | append: media.position | placeholder_svg_tag }}</span>
+            {% endif %}
+          </button>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} PC: 세로 스택, 슬라이더 없음 {%- endcomment -%}
+    <div class="p26-gallery-desktop p26-main-wrap">
+      <ul class="p26-media-list-desktop list-unstyled" role="list">
+        {%- for media in product.media -%}
+          <li
+            class="p26-media-item-desktop{% if media.media_type != 'image' %} product__media-item--full{% endif %}"
+            data-media-id="{{ section.id }}-{{ media.id }}"
+          >
+            {%- if media.media_type == 'image' -%}
+              {% render 'product-thumbnail', media: media, media_count: product.media.size, position: forloop.index, desktop_layout: 'stacked', mobile_layout: 'show', loop: section.settings.enable_video_looping, modal_id: section.id, section: section, xr_button: false, media_width: 1.0, media_fit: section.settings.media_fit, constrain_to_viewport: section.settings.constrain_to_viewport, lazy_load: forloop.index %}
+            {%- else -%}
+              {% render 'product-thumbnail', media: media, media_count: product.media.size, position: forloop.index, desktop_layout: 'stacked', mobile_layout: 'show', loop: section.settings.enable_video_looping, modal_id: section.id, section: section, xr_button: true, media_width: 1.0, media_fit: section.settings.media_fit, constrain_to_viewport: section.settings.constrain_to_viewport, lazy_load: forloop.index %}
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    </div>
+
+    {%- comment -%} 모바일: slider-component 가로 슬라이더 {%- endcomment -%}
+    <slider-component id="P26GalleryViewer-{{ section.id }}" class="p26-gallery-mobile p26-main-wrap">
+      <ul
+        id="Slider-P26-{{ section.id }}"
+        class="product__media-list contains-media grid grid--1-col-tablet-down list-unstyled slider slider--mobile p26-slider-full"
+        role="list"
+      >
+        {%- for media in product.media -%}
+          <li
+            id="Slide-P26-{{ section.id }}-{{ media.id }}"
+            class="product__media-item grid__item slider__slide p26-slide{% if media.id == featured_media.id %} is-active{% endif %}{% if media.media_type != 'image' %} product__media-item--full{% endif %}"
+            data-media-id="{{ section.id }}-{{ media.id }}"
+          >
+            {%- comment -%} 모바일 슬라이더: lazy_load false로 즉시 로드 (모바일 초기 로드 시 lazy가 제대로 동작 안 함) {%- endcomment -%}
+            {%- if media.media_type == 'image' -%}
+              {% render 'product-thumbnail',
+                media: media,
+                media_count: product.media.size,
+                position: forloop.index,
+                desktop_layout: 'stacked',
+                mobile_layout: 'show',
+                loop: section.settings.enable_video_looping,
+                modal_id: section.id,
+                section: section,
+                xr_button: false,
+                media_width: 1.0,
+                media_fit: section.settings.media_fit,
+                constrain_to_viewport: section.settings.constrain_to_viewport,
+                lazy_load: false
+              %}
+            {%- else -%}
+              {% render 'product-thumbnail',
+                media: media,
+                media_count: product.media.size,
+                position: forloop.index,
+                desktop_layout: 'stacked',
+                mobile_layout: 'show',
+                loop: section.settings.enable_video_looping,
+                modal_id: section.id,
+                section: section,
+                xr_button: true,
+                media_width: 1.0,
+                media_fit: section.settings.media_fit,
+                constrain_to_viewport: section.settings.constrain_to_viewport,
+                lazy_load: false
+              %}
+            {%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+      {%- if product.media.size > 1 -%}
+        <div class="p26-slider-controls">
+          <button type="button" class="slider-button slider-button--prev p26-slider-arrow" name="previous" aria-label="{{ 'general.slider.previous_slide' | t }}">
+            <span class="svg-wrapper">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+          </button>
+          <button type="button" class="slider-button slider-button--next p26-slider-arrow" name="next" aria-label="{{ 'general.slider.next_slide' | t }}">
+            <span class="svg-wrapper">{{- 'icon-caret.svg' | inline_asset_content -}}</span>
+          </button>
+          <div class="slider-counter caption p26-slider-counter">
+            <span class="slider-counter--current">1</span>
+            <span aria-hidden="true"> / </span>
+            <span class="visually-hidden">{{ 'general.slider.of' | t }}</span>
+            <span class="slider-counter--total">{{ product.media.size }}</span>
+          </div>
+        </div>
+      {%- endif -%}
+    </slider-component>
+  </div>
+</div>
+
+<script>
+(function() {
+  var g = document.getElementById('P26Gallery-{{ section.id }}');
+  if (!g) return;
+  var thumbs = g.querySelectorAll('.p26-thumb');
+
+  thumbs.forEach(function(t) {
+    t.addEventListener('click', function() {
+      var id = this.getAttribute('data-target');
+      thumbs.forEach(function(x){ x.classList.remove('is-active'); x.setAttribute('aria-current','false'); });
+      this.classList.add('is-active');
+      this.setAttribute('aria-current','true');
+      var s = g.querySelector('[data-media-id="' + id + '"]');
+      if (s) s.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* 모바일: 터치+마우스 드래그 스와이프 (슬라이더에만) */
+  var slider = g.querySelector('#Slider-P26-{{ section.id }}');
+  if (slider) {
+    var isDown = false, startX, scrollLeft;
+    slider.addEventListener('mousedown', function(e) {
+      isDown = true;
+      slider.classList.add('is-dragging');
+      startX = e.pageX - slider.offsetLeft;
+      scrollLeft = slider.scrollLeft;
+    });
+    slider.addEventListener('mousemove', function(e) {
+      if (!isDown) return;
+      e.preventDefault();
+      var x = e.pageX - slider.offsetLeft;
+      var walk = (x - startX) * 1.2;
+      slider.scrollLeft = scrollLeft - walk;
+    });
+    slider.addEventListener('mouseup', function() { isDown = false; slider.classList.remove('is-dragging'); });
+    slider.addEventListener('mouseleave', function() { isDown = false; slider.classList.remove('is-dragging'); });
+  }
+})();
+</script>
+{% comment %}
+
+This file has been rewritten to preserve the original behavior.
+
+---
+Changes:
+- from: "{% render 'product-thumbnail',\r\n                media: media,\r\n                media_count:
+    product.media.size,\r\n                position: forloop.index,\r\n                desktop_layout:
+    'stacked',\r\n                mobile_layout: 'show',\r\n                loop:
+    section.settings.enable_video_looping,\r\n                modal_id: section.id,\r\n
+    \               section: section,\r\n                xr_button: false,\r\n                media_width:
+    1.0,\r\n                media_fit: section.settings.media_fit,\r\n                constrain_to_viewport:
+    section.settings.constrain_to_viewport,\r\n                lazy_load: forloop.index
+    > 1\r\n              %}"
+  to: "{% render 'product-thumbnail', media: media, media_count: product.media.size,
+    position: forloop.index, desktop_layout: 'stacked', mobile_layout: 'show', loop:
+    section.settings.enable_video_looping, modal_id: section.id, section: section,
+    xr_button: false, media_width: 1.0, media_fit: section.settings.media_fit, constrain_to_viewport:
+    section.settings.constrain_to_viewport, lazy_load: forloop.index %}"
+  position: 2209..2612
+- from: "{% render 'product-thumbnail',\r\n                media: media,\r\n                media_count:
+    product.media.size,\r\n                position: forloop.index,\r\n                desktop_layout:
+    'stacked',\r\n                mobile_layout: 'show',\r\n                loop:
+    section.settings.enable_video_looping,\r\n                modal_id: section.id,\r\n
+    \               section: section,\r\n                xr_button: true,\r\n                media_width:
+    1.0,\r\n                media_fit: section.settings.media_fit,\r\n                constrain_to_viewport:
+    section.settings.constrain_to_viewport,\r\n                lazy_load: forloop.index
+    > 1\r\n              %}"
+  to: "{% render 'product-thumbnail', media: media, media_count: product.media.size,
+    position: forloop.index, desktop_layout: 'stacked', mobile_layout: 'show', loop:
+    section.settings.enable_video_looping, modal_id: section.id, section: section,
+    xr_button: true, media_width: 1.0, media_fit: section.settings.media_fit, constrain_to_viewport:
+    section.settings.constrain_to_viewport, lazy_load: forloop.index %}"
+  position: 2654..3056
+{% endcomment %}

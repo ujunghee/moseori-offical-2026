@@ -1,0 +1,47 @@
+<style type="text/css">
+  .template-404 {
+    height: calc(100vh - 8rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    margin: 6rem auto 2rem;
+  }
+  .template-404 .txt-notify {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+  .template-404 .title {
+    padding:0;
+    margin:0;
+  }
+
+  .template-404 p {
+    padding:0;
+    margin:0;
+  }
+
+  .template-404 a {
+    background: initial;
+    color: #000;
+    text-decoration: underline;
+  }
+
+</style>
+
+<div class="template-404 page-width page-margin center">
+  <div class="txt-notify">
+    <p>
+      {{ 'templates.404.subtext' | t }}
+    </p>
+    <h1 class="title">
+      {{ 'templates.404.title' | t }}
+    </h1>
+  </div>
+  <a href="{{ routes.all_products_collection_url }}" class="button">
+    {{ 'general.continue_shopping' | t }}
+  </a>
+</div>

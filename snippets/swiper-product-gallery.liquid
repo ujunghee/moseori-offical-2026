@@ -1,0 +1,76 @@
+{% comment %} swiper-product-gallery.liquid {% endcomment %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
+<style>
+  .swiper {
+    width: 100%;
+    height: auto;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .swiper-slide {
+    text-align: center;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .swiper-slide img {
+    max-width: 100%;
+    width:100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  
+  @media screen and (max-width: 749px) {
+    .swiper-button-next, .swiper-button-prev {
+      --swiper-navigation-size: 25px;
+    }
+  }
+</style>
+
+<div class="custom-product-gallery">
+  <div class="swiper main-swiper">
+    <div class="swiper-wrapper">
+      {% for media in product.media %}
+        <div class="swiper-slide">
+          {% if media.media_type == 'image' %}
+            <img src="{{ media | img_url: 'master' }}" alt="{{ media.alt | escape }}">
+          {% else %}
+            <div class="product-media-placeholder">
+              {{ 'product-' | append: media.position | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination"></div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var mainSwiper = new Swiper('.main-swiper', {
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        type: "progressbar",
+      },
+      // 모바일에서 터치 이벤트 최적화
+      touchRatio: 1,
+      touchAngle: 45,
+      grabCursor: true,
+      resistance: true,
+      resistanceRatio: 0.5,
+    });
+  });
+</script>

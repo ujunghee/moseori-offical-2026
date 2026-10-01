@@ -1,0 +1,35 @@
+    <div class="nav-menu-mb">
+      <ul>
+        <!-- <li><a href="{{ routes.root_url }}">Home</a></li> -->
+        <li class="has-submenu">
+          <a class="open">House</a>
+          <ul class="submenu">
+            <li><a href="/collections/All">All</a></li>
+            <li><a href="/collections/Tops">Tops</a></li>
+            <li><a href="/collections/Bags">Bags</a></li>
+            <li><a href="/collections/Hats">Hats</a></li>
+            <li><a href="/collections/Accessories">Accessories</a></li>
+        
+          </ul>
+        </li
+        {%- comment -%}
+        <li><a href="/pages/collections">Collections</a></li>
+         {%- endcomment -%}
+        <li><a href="/pages/about">About</a></li>
+        <li><a href="/pages/contact">Contact</a></li>
+      </ul>
+    </div>
+
+{% schema %}
+{
+  "name": "모바일 메뉴",
+  "class": "custom-menu-section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "모바일 메뉴",
+      "category": "모바일 콘텐츠"
+    }
+  ]
+}
+{% endschema %}

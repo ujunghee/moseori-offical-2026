@@ -1,0 +1,197 @@
+{%- style -%}
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.3s ease;
+}
+a:hover {
+    opacity: 0.8;
+}
+.policy-wrap {
+    width: 100vw;
+    display: flex;
+    min-height: calc(100vh - 4rem);
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+}
+.policy-content {
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    width: 90%;
+    margin: 0 auto;
+}
+  .policy-title {
+    margin-bottom:1rem;
+  }
+.policy-section {
+    font-size:13px;
+    margin-bottom: 2rem;
+}
+.policy-section h3 {
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+.policy-section p {
+    margin: 0.5rem 0;
+    line-height: 1.8;
+}
+.policy-section ul {
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+}
+.policy-section ul li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+{%- endstyle -%}
+
+<div class="policy-wrap">
+  <div class="policy-content">
+    {% comment %}
+    {%- if section.settings.heading != blank -%}
+      <h2 class="policy-section">
+        {{ section.settings.heading }}
+      </h2>
+    {%- endif -%}
+    {% endcomment %}
+    {%- if section.settings.policy_text != blank -%}
+      <div class="policy-section">
+        {{ section.settings.policy_text }}
+      </div>
+    {%- endif -%}
+    
+    {%- if section.settings.privacy_policy != blank -%}
+      <div class="policy-section">
+        <h3>개인정보처리방침</h3>
+        {{ section.settings.privacy_policy }}
+      </div>
+    {%- endif -%}
+    
+    {%- if section.settings.terms_of_service != blank -%}
+      <div class="policy-section">
+        <h3>이용약관</h3>
+        {{ section.settings.terms_of_service }}
+      </div>
+    {%- endif -%}
+    
+    {%- if section.settings.shipping_policy != blank -%}
+      <div class="policy-section">
+        <h3>배송 정책</h3>
+        {{ section.settings.shipping_policy }}
+      </div>
+    {%- endif -%}
+    
+    {%- if section.settings.refund_policy != blank -%}
+      <div class="policy-section">
+        <h3>환불 및 교환 정책</h3>
+        {{ section.settings.refund_policy }}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Policy",
+  "tag": "section",
+  "class": "section",
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "default": "회사 정책",
+      "label": "제목"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h2",
+          "label": "작게"
+        },
+        {
+          "value": "h1",
+          "label": "중간"
+        },
+        {
+          "value": "h0",
+          "label": "크게"
+        }
+      ],
+      "default": "h1",
+      "label": "제목 크기"
+    },
+    {
+      "type": "richtext",
+      "id": "policy_text",
+      "default": "<p>회사의 정책에 대한 내용을 입력하세요.</p>",
+      "label": "일반 정책 내용"
+    },
+    {
+      "type": "richtext",
+      "id": "privacy_policy",
+      "default": "<p>개인정보처리방침 내용을 입력하세요.</p>",
+      "label": "개인정보처리방침"
+    },
+    {
+      "type": "richtext",
+      "id": "terms_of_service",
+      "default": "<p>이용약관 내용을 입력하세요.</p>",
+      "label": "이용약관"
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_policy",
+      "default": "<p>배송 정책 내용을 입력하세요.</p>",
+      "label": "배송 정책"
+    },
+    {
+      "type": "richtext",
+      "id": "refund_policy",
+      "default": "<p>환불 및 교환 정책 내용을 입력하세요.</p>",
+      "label": "환불 및 교환 정책"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "색상 스키마",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "섹션 패딩"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "상단 패딩",
+      "default": 36
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "하단 패딩",
+      "default": 36
+    }
+  ],
+  "presets": [
+    {
+      "name": "Policy"
+    }
+  ]
+}
+{% endschema %}

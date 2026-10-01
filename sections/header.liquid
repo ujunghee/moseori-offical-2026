@@ -1,0 +1,449 @@
+<link rel="stylesheet" href="{{ 'component-list-menu.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'component-search.css' | asset_url }}" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="{{ 'base.css' | asset_url }}" media="print" onload="this.media='all'">
+
+<style>
+   .header__heading-logo.custom-svg-logo {
+    color: #000000;
+   }
+   .header {
+      font-family: Times New Roman, Times, serif;
+      position: relative;
+      width:100%;
+      display: flex;
+      justify-content: center;
+      justify-content: space-between;
+      transition: .3s;
+      align-items: center;
+      height:6rem;
+    }
+    #shopify-section-custom-menu {
+      font-family: Times New Roman, Times, serif;
+      height: 100%;
+      width: 100%;
+      top: 0;
+      transition: .3s;
+      position: fixed;
+      background: #1703036b;
+      backdrop-filter: blur(50px);
+      -webkit-backdrop-filter :blur(24px);
+    }
+    .menu-open {
+      height:100%;
+      background:inherit;
+      border:none;
+      color:black;
+      cursor:pointer;
+      display:none;
+      font-size:14px;
+      font-family: Times New Roman, Times, serif;
+      padding:0;
+    }
+    .section-header {
+      position: fixed;
+      height: auto !important;
+      top: 0;
+      width: 100%;
+      z-index: 5 !important; /* 메뉴 배경색 지정 */
+    }
+    .header__heading-link {
+      position: absolute;
+      left: 50%;
+      top:50%;
+      transform: translate(-50%, -50%);
+      padding: .75rem;
+      text-decoration: none;
+      word-break: break-word;
+    }
+    .template-index .header__heading-link {
+      display: none;
+    }
+  
+    /* 기본 메뉴 스타일 */
+    .custom-menu-section.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .custom-menu-section {
+      visibility: hidden;
+      z-index: -10;
+      opacity: 0;
+      display:none;
+    }
+    .nav-menu {
+      position: absolute;
+      display:block;
+      top: 25%;
+    }
+    
+    .nav-menu ul,
+    .nav-menu-mb ul{
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 12px;
+    }
+    
+    .nav-menu > ul,
+    .nav-menu-mb > ul{
+      display: inline-flex;
+      flex-direction: column;
+      gap: .2rem;
+    }
+    
+    .nav-menu a { 
+      text-decoration: none;
+      color: var(--main-color-black);
+      font-weight: 500;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 14px;
+      transition: .3s;
+      display: block;
+      padding: 1px 6px;
+    }
+    .nav-menu-mb a {
+      text-decoration: none;
+      color: white;
+      font-weight: 500;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 14px;
+      display: block;
+      padding: 1px 6px;
+    }
+    .nav-menu a:hover {
+      background: black;
+      color: white;
+    }
+    
+    /* 아코디언 메뉴 스타일 */
+    .nav-menu .has-submenu,
+    .nav-menu-mb .has-submenu {
+      position: relative;
+    }
+    
+    .nav-menu .has-submenu > a,
+    .nav-menu-mb .has-submenu > a {
+      position: relative;
+      cursor: pointer;
+    }
+    .nav-menu .submenu,
+    .nav-menu-mb .submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .8s cubic-bezier(0.53, 0.01, 0.09, 0.99) 0s;
+    }
+    
+    .nav-menu .has-submenu.open .submenu,
+    .nav-menu-mb .has-submenu.open .submenu{
+      max-height: 300px; /* 카테고리 수에 따라 조정 */
+    }
+    
+    .nav-menu .submenu a,
+    .nav-menu-mb .submenu a{
+      padding-left: 20px;
+    }
+    
+    /* 장바구니 스타일 */
+    .header-cart {
+      display: flex;
+      align-items: center;
+      margin-left: auto;
+      color: black;
+      font-size: 14px;
+      height: 100%;
+    }
+    .header-cart a {
+      text-decoration: none;
+      color: var(--main-color-black);
+    }
+    .header-cart a p {
+      display:flex;
+    }
+    .cart-count {
+      color: black;
+      font-size: 14px;
+    }
+    
+    @media (max-width: 1020px) {
+      .header {
+        align-items: flex-start;
+        padding:10px 2rem 10px 2rem;
+        justify-content: center;
+      }
+      .header__heading-link {
+        display:inline-block;
+      }
+      .custom-menu-section {
+        z-index:3;
+        display:block;
+      }
+      .nav-menu {
+        top: 50%;
+        display:none;
+        transform: translateY(-50%);
+      }
+      .menu-open {
+        display:block;
+      }
+      .nav-menu > ul {
+        flex-direction: column;
+        gap: 0;
+      }
+      .nav-menu-mb {
+        display:block;
+        padding: 6rem 2rem 0;
+      }
+    }
+  
+</style>
+{% liquid
+  assign header_tag = 'div'
+
+  if section.settings.sticky_header_type != 'none'
+    assign header_tag = 'sticky-header'
+  endif
+%}
+ <!--  MAIN header 삭제 -->
+ {% if template == 'index' %}
+  <style>
+    .header__heading-link {
+      display: none;
+    }
+    @media screen and (max-width: 768px) {
+    .header__heading-link {
+      display: block;
+      }
+    }
+  </style>
+ {% endif %}
+ 
+<{{ header_tag }}
+  {% if header_tag == 'sticky-header' %}
+    data-sticky-type="{{ section.settings.sticky_header_type }}"
+  {% endif %}
+  class="header-wrapper color-{{ section.settings.color_scheme }} gradient{% if section.settings.show_line_separator %} header-wrapper--border-bottom{% endif %}"
+>
+<header class="header page-width">
+  {%- if request.page_type == 'index' -%}
+  {%- endif -%}
+  <a href="{{ routes.root_url }}" class="header__heading-link link link--text focus-inset">
+    {%- if settings.logo != blank -%}
+      <div class="header__heading-logo-wrapper">
+        {%- assign logo_alt = settings.logo.alt | default: shop.name | escape -%}
+       {% if template == 'index' %}
+        <img src="{{ 'moseori_logo_w.svg' | asset_url }}" 
+             id="header-logo"
+             class="header__heading-logo"
+             width="{{ settings.logo_width }}" 
+             alt="{{ logo_alt }}"
+             loading="lazy">
+      {% else %}
+        <img src="{{ 'moseori_logo.svg' | asset_url }}" 
+             id="header-logo"
+             class="header__heading-logo"
+             width="{{ settings.logo_width }}" 
+             alt="{{ logo_alt }}"
+             loading="lazy">
+      {% endif %}
+        <span class="blind">모서리 로고</span>
+      </div>
+    {%- else -%}
+      <span class="h2">{{ shop.name }}</span>
+    {%- endif -%}
+  </a>
+  {%- if request.page_type == 'index' -%}
+  {%- endif -%}
+  <button class="menu-open" type="button">menu</button> 
+  <div class="nav-menu">
+    <ul>
+      <!-- <li><a href="{{ routes.root_url }}">Home</a></li> -->
+      <li class="has-submenu">
+        <a class="open">House</a>
+        <ul class="submenu">
+          <!-- 판매될 제품 카테고리 -->
+            <li><a href="/collections/All">All</a></li>
+            <li><a href="/collections/Tops">Tops</a></li>
+            <li><a href="/collections/Bags">Bags</a></li>
+            <li><a href="/collections/Hats">Hats</a></li>
+            <li><a href="/collections/Accessories">Accessories</a></li>
+        </ul>
+      </li>
+      {%- comment -%}
+      <li><a href="/pages/collections">Collections</a></li>
+      {%- endcomment -%}
+      <!-- 그 외에 카테고리 -->
+      <li><a href="/pages/about">About</a></li>
+      <li><a href="/pages/contact">Contact</a></li>
+    </ul>
+  </div>
+
+  <div class="header-cart">
+    <a href="javascript:void(0);" class="cart-icon" onclick="openCartPopup(); return false;"> 
+      <p>Bag(
+        <span class="cart-count">{{ cart.item_count }}</span>)
+      </p>
+     </a>
+  </div>
+  
+</header>
+</{{ header_tag }}>
+{% javascript %}
+
+  class StickyHeader extends HTMLElement {
+    constructor() {
+      super();
+    }
+  
+    connectedCallback() {
+      this.header = document.querySelector('.section-header');
+      this.headerIsAlwaysSticky =
+        this.getAttribute('data-sticky-type') === 'always' ||
+        this.getAttribute('data-sticky-type') === 'reduce-logo-size';
+      this.headerBounds = {};
+
+      this.setHeaderHeight();
+
+      window.matchMedia('(max-width: 990px)').addEventListener('change', this.setHeaderHeight.bind(this));
+
+      if (this.headerIsAlwaysSticky) {
+        this.header.classList.add('shopify-section-header-sticky');
+      }
+
+      this.createObserver();
+      
+      // 아코디언 메뉴 기능 추가
+      this.initAccordionMenu();
+    }
+
+    setHeaderHeight() {
+      document.documentElement.style.setProperty('--header-height', `${this.header.offsetHeight}px`);
+    }
+
+    createObserver() {
+      let observer = new IntersectionObserver((entries, observer) => {
+        this.headerBounds = entries[0].intersectionRect;
+        observer.disconnect();
+      });
+
+      observer.observe(this.header);
+    }
+    
+    initAccordionMenu() {
+      const submenuToggles = document.querySelectorAll('.has-submenu > a.open');
+      
+      submenuToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+          e.preventDefault();
+          const parent = this.parentElement;
+          
+          // 다른 열린 메뉴 닫기 (선택적)
+          const openMenus = document.querySelectorAll('.has-submenu.open');
+          openMenus.forEach(menu => {
+            if (menu !== parent) {
+              menu.classList.remove('open');
+            }
+          });
+          
+          // 클릭한 메뉴 토글
+          parent.classList.toggle('open');
+        });
+      });
+    }
+  }
+    
+  customElements.define('sticky-header', StickyHeader);
+
+
+  
+{% endjavascript %}
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": {{ shop.name | json }},
+    {% if settings.logo %}
+      "logo": {{ settings.logo | image_url: width: 500 | prepend: "https:" | json }},
+    {% endif %}
+    "url": {{ request.origin | append: page.url | json }}
+  }
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "select",
+      "id": "sticky_header_type",
+      "options": [
+        {
+          "value": "none",
+          "label": "t:sections.header.settings.sticky_header_type.options__1.label"
+        },
+        {
+          "value": "always",
+          "label": "t:sections.header.settings.sticky_header_type.options__3.label"
+        }
+      ],
+      "default": "always",
+      "label": "t:sections.header.settings.sticky_header_type.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_line_separator",
+      "default": true,
+      "label": "t:sections.header.settings.show_line_separator.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.header__1.content"
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.spacing"
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.header.settings.margin_bottom.label",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 36,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 36,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 20
+    }
+  ]
+}
+{% endschema %}
