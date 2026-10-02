@@ -162,11 +162,17 @@
   height: 100%;
 }
 
-/* 상품정보 - sticky (선택) */
-.p26__info {
-  position: sticky;
-  top: var(--sticky-top, 8rem);
-  align-self: start;
+/* 상품정보 - PC에서 sticky.
+   내용이 화면보다 길면 페이지 스크롤에 맞춰 패널이 같이 움직이고,
+   패널 끝이 보이면 그 자리에 고정된다. */
+@media screen and (min-width: 990px) {
+  .p26__info--sticky {
+    position: sticky;
+    top: var(--sticky-top, 8rem);
+    align-self: start;
+    padding-bottom: 4rem;
+    z-index: 2;
+  }
 }
 
 /* --- 상품정보 스타일 --- */
@@ -265,8 +271,9 @@
   font-size: 1.3rem;
   line-height: 1.6;
   padding-top: 0.5rem;
-  max-height: clamp(40vh, 58vh, 80vh);
-  overflow:auto;
+  padding-bottom: 1.6rem;
+  max-height: none;
+  overflow: visible;
 }
 
 /* Details 아코디언 - + 아이콘 */

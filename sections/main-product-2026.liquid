@@ -54,6 +54,7 @@
 
   <script src="{{ 'product-info.js' | asset_url }}" defer></script>
   <script src="{{ 'product-form.js' | asset_url }}" defer></script>
+  <script src="{{ 'product-page-2026.js' | asset_url }}" defer></script>
   {% if product.quantity_price_breaks_configured? %}
     <script src="{{ 'show-more.js' | asset_url }}" defer></script>
     <script src="{{ 'price-per-item.js' | asset_url }}" defer></script>
@@ -82,7 +83,7 @@
       <div class="p26__gallery">
         {% render 'product-2026-gallery', variant_images: variant_images, section: section %}
       </div>
-      <div class="p26__info">
+      <div class="p26__info{% if section.settings.enable_sticky_info %} p26__info--sticky{% endif %}">
         <div id="ProductInfo-2026-{{ section.id }}" class="p26__info-inner">
           {% render 'product-2026-blocks', blocks: section.blocks, product: product, section: section, product_form_id: product_form_id %}
         </div>
