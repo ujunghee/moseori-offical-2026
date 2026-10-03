@@ -5,7 +5,6 @@ if (!customElements.get('infinite-scroll')) {
       connectedCallback() {
         this.isLoading = false;
         this.link = this.querySelector('.infinite-scroll__link');
-        this.spinner = this.querySelector('.infinite-scroll__spinner');
         this.section = this.closest('.shopify-section') || document;
         this.sectionId = this.section.id?.replace('shopify-section-', '');
 
@@ -80,23 +79,20 @@ if (!customElements.get('infinite-scroll')) {
 
       toggleLoading(isLoading) {
         this.isLoading = isLoading;
-        this.spinner?.classList.toggle('hidden', !isLoading);
       }
 
       revealItems(items) {
-        const triggers = items.flatMap((item) => [
-          ...(item.classList.contains('scroll-trigger') ? [item] : []),
-          ...item.getElementsByClassName('scroll-trigger'),
-        ]);
-        if (triggers.length === 0) return;
-
-        if (typeof onIntersection !== 'function') {
-          triggers.forEach((element) => element.classList.add('scroll-trigger--cancel'));
-          return;
-        }
-
-        const observer = new IntersectionObserver(onIntersection, { rootMargin: '0px 0px -50px 0px' });
-        triggers.forEach((element) => observer.observe(element));
+        items.forEach((item) => {
+          item.classList.add('is-appended');
+          const triggers = [
+            ...(item.classList.contains('scroll-trigger') ? [item] : []),
+            ...item.getElementsByClassName('scroll-trigger'),
+          ];
+          triggers.forEach((element) => {
+            element.classList.add('scroll-trigger--cancel');
+            element.classList.remove('scroll-trigger--offscreen');
+          });
+        });
       }
     }
   );
