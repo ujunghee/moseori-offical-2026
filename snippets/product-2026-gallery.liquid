@@ -126,16 +126,34 @@
 (function() {
   var g = document.getElementById('P26Gallery-{{ section.id }}');
   if (!g) return;
+  var pending = 0;
+  var curtain = document.querySelector('.p26-enter');
+  var openedAt = Date.now();
+
+  function finishEnter() {
+    if (!curtain || curtain.classList.contains('is-done')) return;
+    var wait = Math.max(0, 700 - (Date.now() - openedAt));
+    window.setTimeout(function() {
+      curtain.classList.add('is-done');
+    }, wait);
+  }
+
   g.querySelectorAll('.product__media img').forEach(function(img) {
     function showImage() {
       img.classList.add('is-loaded');
+      pending -= 1;
+      if (pending <= 0) finishEnter();
     }
+    pending += 1;
     if (img.complete && img.naturalWidth > 0) showImage();
     else {
       img.addEventListener('load', showImage, { once: true });
       img.addEventListener('error', showImage, { once: true });
     }
   });
+
+  if (pending === 0) finishEnter();
+  window.setTimeout(finishEnter, 8000);
 
   var thumbs = g.querySelectorAll('.p26-thumb');
 
