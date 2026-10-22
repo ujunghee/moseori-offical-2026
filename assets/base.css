@@ -111,6 +111,7 @@ body {
   padding: 0 2rem;
 }
 .collection.page-width {
+  max-width: 120rem;
   margin-top:12rem;
   padding-bottom: 4.8rem;
 }

@@ -98,3 +98,10 @@
 .collection__view-all a:not(.link) {
   margin-top: 1rem;
 }
+
+@media screen and (min-width: 990px) {
+  .collection .grid--3-col-desktop.product-grid .grid__item {
+    width: calc((100% - 3.2rem) / 3);
+    max-width: calc((100% - 3.2rem) / 3);
+  }
+}
