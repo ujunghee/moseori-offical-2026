@@ -126,36 +126,6 @@
 (function() {
   var g = document.getElementById('P26Gallery-{{ section.id }}');
   if (!g) return;
-  var pending = 0;
-  var curtain = document.querySelector('.p26-enter');
-  var gallery = window.matchMedia('(min-width: 750px)').matches
-    ? g.querySelector('.p26-gallery-desktop')
-    : g.querySelector('.p26-gallery-mobile');
-
-  function finishEnter() {
-    if (!curtain || curtain.classList.contains('is-done')) return;
-    curtain.classList.add('is-done');
-  }
-
-  (gallery || g).querySelectorAll('.product__media img').forEach(function(img) {
-    function showImage() {
-      img.classList.add('is-loaded');
-      pending -= 1;
-      if (pending <= 0) finishEnter();
-    }
-    if (img.complete && img.naturalWidth > 0) {
-      img.classList.add('is-loaded');
-    } else {
-      pending += 1;
-      img.addEventListener('load', showImage, { once: true });
-      img.addEventListener('error', showImage, { once: true });
-    }
-  });
-
-  if (pending === 0) finishEnter();
-  else if (curtain) curtain.classList.add('is-in');
-  window.setTimeout(finishEnter, 8000);
-
   var thumbs = g.querySelectorAll('.p26-thumb');
 
   thumbs.forEach(function(t) {

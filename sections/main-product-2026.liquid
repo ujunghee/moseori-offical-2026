@@ -7,10 +7,6 @@
 {% assign product_form_id = 'product-form-2026-' | append: section.id %}
 {% assign first_3d_model = product.media | where: 'media_type', 'model' | first %}
 
-<div class="p26-enter" role="status" aria-live="polite">
-  <p class="p26-enter__text">One moment, please.</p>
-</div>
-
 <product-info
   id="MainProduct-2026-{{ section.id }}"
   class="p26"
