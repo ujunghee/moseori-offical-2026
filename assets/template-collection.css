@@ -101,7 +101,8 @@
 
 @media screen and (min-width: 990px) {
   .collection .grid--3-col-desktop.product-grid .grid__item {
-    width: calc((100% - 3.2rem) / 3);
-    max-width: calc((100% - 3.2rem) / 3);
+    flex-grow: 0;
+    width: calc((100% - 6.4rem) / 3);
+    max-width: calc((100% - 6.4rem) / 3);
   }
 }
