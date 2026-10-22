@@ -4,13 +4,11 @@ if (!customElements.get('infinite-scroll')) {
     class InfiniteScroll extends HTMLElement {
       connectedCallback() {
         this.isLoading = false;
-        this.link = this.querySelector('.infinite-scroll__link');
         this.section = this.closest('.shopify-section') || document;
         this.sectionId = this.section.id?.replace('shopify-section-', '');
 
         if (!this.dataset.nextUrl) return;
 
-        this.link?.setAttribute('hidden', '');
         this.observer = new IntersectionObserver(
           (entries) => {
             if (entries.some((entry) => entry.isIntersecting)) this.loadNextPage();
@@ -66,7 +64,6 @@ if (!customElements.get('infinite-scroll')) {
           console.error(error);
           this.toggleLoading(false);
           this.observer.disconnect();
-          this.link?.removeAttribute('hidden');
         }
       }
 
@@ -74,7 +71,6 @@ if (!customElements.get('infinite-scroll')) {
         const url = new URL(nextUrl, window.location.origin);
         url.searchParams.delete('section_id');
         this.dataset.nextUrl = `${url.pathname}${url.search}`;
-        if (this.link) this.link.href = this.dataset.nextUrl;
       }
 
       toggleLoading(isLoading) {

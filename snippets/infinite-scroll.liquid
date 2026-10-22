@@ -20,9 +20,6 @@
     class="infinite-scroll"
     data-container="{{ container | escape }}"
     data-next-url="{{ paginate.next.url }}"
-  >
-    <a href="{{ paginate.next.url }}" class="infinite-scroll__link link">
-      {{- 'general.pagination.next' | t -}}
-    </a>
-  </infinite-scroll>
+    aria-hidden="true"
+  ></infinite-scroll>
 {%- endif -%}
