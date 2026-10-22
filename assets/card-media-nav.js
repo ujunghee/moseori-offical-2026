@@ -6,7 +6,8 @@ if (!customElements.get('card-media-nav')) {
         const data = this.querySelector('script[type="application/json"]');
         this.images = data ? JSON.parse(data.textContent) : [];
         this.index = 0;
-        this.image = this.closest('.card__inner')?.querySelector('.card-media-nav__image');
+        const root = this.closest('.card-wrapper') || this.parentElement;
+        this.image = root?.querySelector('.card-media-nav__image');
 
         if (!this.image || this.images.length < 2) return;
 

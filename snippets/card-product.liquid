@@ -117,42 +117,6 @@
             </div>
           </div>
         {%- endif -%}
-        {%- if show_card_image_nav -%}
-          <card-media-nav class="card-media-nav">
-            <button
-              type="button"
-              class="card-media-nav__button card-media-nav__button--prev"
-              data-direction="prev"
-              aria-label="{{ 'general.slider.previous_slide' | t }}"
-            >
-              <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
-            </button>
-            <button
-              type="button"
-              class="card-media-nav__button card-media-nav__button--next"
-              data-direction="next"
-              aria-label="{{ 'general.slider.next_slide' | t }}"
-            >
-              <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
-            </button>
-            <script type="application/json">
-              [
-                {%- assign card_nav_first = true -%}
-                {%- if card_product.featured_media.media_type == 'image' -%}
-                  {"src":{{ card_product.featured_media | image_url: width: 1066 | json }},"alt":{{ card_product.featured_media.alt | json }}}
-                  {%- assign card_nav_first = false -%}
-                {%- endif -%}
-                {%- for media in card_product.media -%}
-                  {%- if media.media_type == 'image' and media.id != card_product.featured_media.id -%}
-                    {%- unless card_nav_first -%},{%- endunless -%}
-                    {"src":{{ media | image_url: width: 1066 | json }},"alt":{{ media.alt | json }}}
-                    {%- assign card_nav_first = false -%}
-                  {%- endif -%}
-                {%- endfor -%}
-              ]
-            </script>
-          </card-media-nav>
-        {%- endif -%}
         <div class="card__content">
           <div class="card__information">
             <h3
@@ -491,6 +455,42 @@
           {%- endif -%}
         </div>
       </div>
+      {%- if show_card_image_nav -%}
+        <card-media-nav class="card-media-nav">
+          <button
+            type="button"
+            class="card-media-nav__button card-media-nav__button--prev"
+            data-direction="prev"
+            aria-label="{{ 'general.slider.previous_slide' | t }}"
+          >
+            <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+          </button>
+          <button
+            type="button"
+            class="card-media-nav__button card-media-nav__button--next"
+            data-direction="next"
+            aria-label="{{ 'general.slider.next_slide' | t }}"
+          >
+            <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+          </button>
+          <script type="application/json">
+            [
+              {%- assign card_nav_first = true -%}
+              {%- if card_product.featured_media.media_type == 'image' -%}
+                {"src":{{ card_product.featured_media | image_url: width: 1066 | json }},"alt":{{ card_product.featured_media.alt | json }}}
+                {%- assign card_nav_first = false -%}
+              {%- endif -%}
+              {%- for media in card_product.media -%}
+                {%- if media.media_type == 'image' and media.id != card_product.featured_media.id -%}
+                  {%- unless card_nav_first -%},{%- endunless -%}
+                  {"src":{{ media | image_url: width: 1066 | json }},"alt":{{ media.alt | json }}}
+                  {%- assign card_nav_first = false -%}
+                {%- endif -%}
+              {%- endfor -%}
+            ]
+          </script>
+        </card-media-nav>
+      {%- endif -%}
     </div>
   </div>
 {%- else -%}
