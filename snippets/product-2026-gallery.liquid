@@ -126,6 +126,17 @@
 (function() {
   var g = document.getElementById('P26Gallery-{{ section.id }}');
   if (!g) return;
+  g.querySelectorAll('.product__media img').forEach(function(img) {
+    function showImage() {
+      img.classList.add('is-loaded');
+    }
+    if (img.complete && img.naturalWidth > 0) showImage();
+    else {
+      img.addEventListener('load', showImage, { once: true });
+      img.addEventListener('error', showImage, { once: true });
+    }
+  });
+
   var thumbs = g.querySelectorAll('.p26-thumb');
 
   thumbs.forEach(function(t) {

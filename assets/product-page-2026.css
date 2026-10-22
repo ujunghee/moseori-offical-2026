@@ -96,6 +96,26 @@
   }
 }
 
+.p26-gallery .product__media {
+  background: #f3efe9;
+}
+
+.p26-gallery .product__media img {
+  opacity: 0;
+  transition: opacity 0.55s ease;
+}
+
+.p26-gallery .product__media img.is-loaded {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p26-gallery .product__media img {
+    opacity: 1;
+    transition: none;
+  }
+}
+
 /* 모바일: PC 갤러리 숨김, 모바일 갤러리 강제 표시 */
 @media (max-width: 749px) {
   .p26-gallery-desktop {
