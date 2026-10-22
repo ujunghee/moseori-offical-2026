@@ -6,6 +6,7 @@
   - media_aspect_ratio: {String} Size of the product image card. Values are "square" and "portrait". Default is "square" (optional)
   - image_shape: {String} Image mask to apply to the product image card. Values are "arch", "blob", "chevronleft", "chevronright", "diamond", "parallelogram", and "round". (optional)
   - show_secondary_image: {Boolean} Show the secondary image on hover. Default: false (optional)
+  - show_image_nav: {Boolean} Show previous/next buttons to browse product images on hover. Default: false (optional)
   - show_vendor: {Boolean} Show the product vendor. Default: false
   - show_rating: {Boolean} Show the product rating. Default: false
   - extend_height: {Boolean} Card height extends to available container space. Default: true (optional)
@@ -39,6 +40,16 @@
     if ratio == 0 or ratio == null
       assign ratio = 1
     endif
+    assign card_image_count = 0
+    for media in card_product.media
+      if media.media_type == 'image'
+        assign card_image_count = card_image_count | plus: 1
+      endif
+    endfor
+    assign show_card_image_nav = false
+    if show_image_nav and card_image_count > 1 and card_product.featured_media.media_type == 'image'
+      assign show_card_image_nav = true
+    endif
   -%}
   <div class="card-wrapper product-card-wrapper underline-links-hover">
     <div
@@ -59,7 +70,7 @@
       >
         {%- if card_product.featured_media -%}
           <div class="card__media{% if image_shape and image_shape != 'default' %} shape--{{ image_shape }} color-{{ settings.card_color_scheme }} gradient{% endif %}">
-            <div class="media media--transparent media--hover-effect">
+            <div class="media media--transparent{% unless show_card_image_nav %} media--hover-effect{% endunless %}">
               {% comment %}theme-check-disable ImgLazyLoading{% endcomment %}
               <img
                 srcset="
@@ -74,7 +85,7 @@
                 src="{{ card_product.featured_media | image_url: width: 533 }}"
                 sizes="(min-width: {{ settings.page_width }}px) {{ settings.page_width | minus: 130 | divided_by: 4 }}px, (min-width: 990px) calc((100vw - 130px) / 4), (min-width: 750px) calc((100vw - 120px) / 3), calc((100vw - 35px) / 2)"
                 alt="{{ card_product.featured_media.alt | escape }}"
-                class="motion-reduce"
+                class="motion-reduce{% if show_card_image_nav %} card-media-nav__image{% endif %}"
                 {% unless lazy_load == false %}
                   loading="lazy"
                 {% endunless %}
@@ -83,7 +94,7 @@
               >
               {% comment %}theme-check-enable ImgLazyLoading{% endcomment %}
 
-              {%- if card_product.media[1] != null and show_secondary_image -%}
+              {%- if card_product.media[1] != null and show_secondary_image and show_card_image_nav != true -%}
                 <img
                   srcset="
                     {%- if card_product.media[1].width >= 165 -%}{{ card_product.media[1] | image_url: width: 165 }} 165w,{%- endif -%}
@@ -105,6 +116,42 @@
               {%- endif -%}
             </div>
           </div>
+        {%- endif -%}
+        {%- if show_card_image_nav -%}
+          <card-media-nav class="card-media-nav">
+            <button
+              type="button"
+              class="card-media-nav__button card-media-nav__button--prev"
+              data-direction="prev"
+              aria-label="{{ 'general.slider.previous_slide' | t }}"
+            >
+              <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+            </button>
+            <button
+              type="button"
+              class="card-media-nav__button card-media-nav__button--next"
+              data-direction="next"
+              aria-label="{{ 'general.slider.next_slide' | t }}"
+            >
+              <span class="svg-wrapper">{{ 'icon-caret.svg' | inline_asset_content }}</span>
+            </button>
+            <script type="application/json">
+              [
+                {%- assign card_nav_first = true -%}
+                {%- if card_product.featured_media.media_type == 'image' -%}
+                  {"src":{{ card_product.featured_media | image_url: width: 1066 | json }},"alt":{{ card_product.featured_media.alt | json }}}
+                  {%- assign card_nav_first = false -%}
+                {%- endif -%}
+                {%- for media in card_product.media -%}
+                  {%- if media.media_type == 'image' and media.id != card_product.featured_media.id -%}
+                    {%- unless card_nav_first -%},{%- endunless -%}
+                    {"src":{{ media | image_url: width: 1066 | json }},"alt":{{ media.alt | json }}}
+                    {%- assign card_nav_first = false -%}
+                  {%- endif -%}
+                {%- endfor -%}
+              ]
+            </script>
+          </card-media-nav>
         {%- endif -%}
         <div class="card__content">
           <div class="card__information">

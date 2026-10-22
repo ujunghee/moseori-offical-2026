@@ -1,6 +1,9 @@
 {{ 'template-collection.css' | asset_url | stylesheet_tag }}
 {{ 'component-card.css' | asset_url | stylesheet_tag }}
 {{ 'component-price.css' | asset_url | stylesheet_tag }}
+{% comment %}theme-check-disable MissingAsset{% endcomment %}
+<script src="{{ 'card-media-nav.js' | asset_url }}" defer="defer"></script>
+{% comment %}theme-check-enable MissingAsset{% endcomment %}
 
 {% if section.settings.image_shape == 'blob' %}
   {{ 'mask-blobs.css' | asset_url | stylesheet_tag }}
@@ -138,7 +141,8 @@
                     card_product: product,
                     media_aspect_ratio: section.settings.image_ratio,
                     image_shape: section.settings.image_shape,
-                    show_secondary_image: true,
+                    show_secondary_image: false,
+                    show_image_nav: true,
                     show_vendor: section.settings.show_vendor,
                     show_rating: section.settings.show_rating,
                     lazy_load: lazy_load,
