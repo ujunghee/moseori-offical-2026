@@ -129,6 +129,13 @@
   var pending = 0;
   var curtain = document.querySelector('.p26-enter');
   var openedAt = Date.now();
+  if (curtain) {
+    window.requestAnimationFrame(function() {
+      window.requestAnimationFrame(function() {
+        curtain.classList.add('is-in');
+      });
+    });
+  }
 
   function finishEnter() {
     if (!curtain || curtain.classList.contains('is-done')) return;
