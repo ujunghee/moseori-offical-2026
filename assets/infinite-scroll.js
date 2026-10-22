@@ -48,8 +48,8 @@ if (!customElements.get('infinite-scroll')) {
               (element) => !['INFINITE-SCROLL', 'SCRIPT', 'LINK', 'STYLE'].includes(element.tagName)
             );
             const anchor = this.parentElement === container ? this : null;
-            newItems.forEach((item) => container.insertBefore(item, anchor));
             this.revealItems(newItems);
+            newItems.forEach((item) => container.insertBefore(item, anchor));
           }
 
           const nextUrl = nextTrigger?.dataset.nextUrl;
@@ -83,7 +83,6 @@ if (!customElements.get('infinite-scroll')) {
 
       revealItems(items) {
         items.forEach((item) => {
-          item.classList.add('is-appended');
           const triggers = [
             ...(item.classList.contains('scroll-trigger') ? [item] : []),
             ...item.getElementsByClassName('scroll-trigger'),

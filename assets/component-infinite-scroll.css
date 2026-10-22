@@ -17,18 +17,3 @@
   height: auto;
   overflow: visible;
 }
-
-.grid__item.is-appended.scroll-trigger.animate--slide-in,
-.grid__item.is-appended .scroll-trigger.animate--slide-in {
-  transform: none;
-  animation: product-list-fade 0.45s ease forwards;
-}
-
-@keyframes product-list-fade {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
