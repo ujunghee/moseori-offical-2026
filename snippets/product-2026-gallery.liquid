@@ -132,7 +132,7 @@
 
   function finishEnter() {
     if (!curtain || curtain.classList.contains('is-done')) return;
-    var wait = Math.max(0, 700 - (Date.now() - openedAt));
+    var wait = Math.max(0, 2800 - (Date.now() - openedAt));
     window.setTimeout(function() {
       curtain.classList.add('is-done');
     }, wait);
